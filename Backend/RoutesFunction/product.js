@@ -1,22 +1,67 @@
+const ErrorHandler = require('../ErrorHandlingClass/ErrorClass')
 const Products = require('../models/ProductModel')
-
+const catchAsync = require('../catchAsyncError/catchAsync')
 /** Admin Functions*/
 
-exports.createProduct=async(req, res) =>{
+exports.createProduct = catchAsync(async (req, res, next) => {
   const product = await Products.create(req.body)
 
   res.status(201).json({
     message: 'Success',
     product,
   })
-}
+})
+
+exports.updateproduct = catchAsync(async (req, res, next) => {
+  let product = await Products.findById(req.params.id)
+
+  if (!product) {
+    return next(new ErrorHandler('The Product is not listed', 500))
+  }
+
+  product = await Products.findByIdAndUpdate(req.params.id, req.body, {
+    new: true,
+    runValidators: true,
+  })
+
+  res.status(200).json({
+    message: 'THE PRODUCT IS UPDATED',
+    product,
+  })
+})
+
+exports.deleteproduct = catchAsync(async (req, res, next) => {
+  let product = await Products.findById(req.params.id)
+
+  if (!product) {
+    return next(new ErrorHandler('Product Not Found', 500))
+  }
+
+  await product.remove()
+
+  res.status(200).json({
+    message: 'THE PRODUCT IS Deleted',
+    product,
+  })
+})
 
 /**OPEN GET CALLS*/
-exports.allproducts=async(req, res)=> {
+exports.allproducts = catchAsync(async (req, res, next) => {
   const allitems = await Products.find()
   res.status(200).json({
     message: 'Success',
     allitems,
   })
-}
+})
 
+exports.getProductDetails = catchAsync(async (req, res, next) => {
+  const product = await Products.findById(req.params.id)
+  if (!product) {
+    return next(new ErrorHandler('Product Not Found', 500))
+  }
+
+  res.status(200).json({
+    success: true,
+    product,
+  })
+})
