@@ -1,5 +1,6 @@
 const { Router } = require('express')
 const express = require('express')
+const { isAuthenticated } = require('../Middleware/auth')
 const {
   createProduct,
   allproducts,
@@ -14,7 +15,7 @@ const router = express.Router()
 router.post('/product/new', createProduct)
 
 //get routes
-router.get('/products', allproducts)
+router.get('/products', isAuthenticated, allproducts)
 
 router
   .route('/product/:id')
