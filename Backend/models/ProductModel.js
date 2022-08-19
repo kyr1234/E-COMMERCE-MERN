@@ -19,6 +19,15 @@ const products = mongoose.Schema({
     type: Number,
     default: 0,
   },
+  AdminId: {
+    type: mongoose.Schema.ObjectId,
+    ref: 'Users',
+    required: true,
+  },
+  AdminName: {
+    type: String,
+    requied: true,
+  },
 
   image: [
     {

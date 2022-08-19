@@ -5,8 +5,10 @@ const ApiFeature = require('../Classes/Apifeatures')
 /** Admin Functions*/
 
 exports.createProduct = catchAsync(async (req, res, next) => {
-  const product = await Products.create(req.body)
+  req.body.AdminId = req.user.id
+  req.body.AdminName = req.user.name
 
+  const product = await Products.create(req.body)
   res.status(201).json({
     message: 'Success',
     product,
@@ -14,7 +16,6 @@ exports.createProduct = catchAsync(async (req, res, next) => {
 })
 
 exports.updateproduct = catchAsync(async (req, res, next) => {
-
   let product = await Products.findById(req.params.id)
 
   if (!product) {
