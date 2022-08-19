@@ -2,6 +2,7 @@ const mongoose = require('mongoose')
 const bcrypt = require('bcryptjs')
 const validator = require('validator')
 const jwt = require('jsonwebtoken')
+const crypto = require('crypto')
 const Userschema = mongoose.Schema({
   name: {
     type: String,
@@ -33,7 +34,7 @@ const Userschema = mongoose.Schema({
   },
   role: {
     type: String,
-    default:"user"
+    default: 'user',
   },
   resetPasswordToken: String,
   resetPasswordExpire: Date,
@@ -55,6 +56,10 @@ Userschema.methods.getJWTToken = function () {
 }
 
 Userschema.methods.comparePassword = async function (enteredPassword) {
+  return await bcrypt.compare(enteredPassword, this.password)
+}
+
+Userschema.methods.getResetToken = async function () {
   return await bcrypt.compare(enteredPassword, this.password)
 }
 
