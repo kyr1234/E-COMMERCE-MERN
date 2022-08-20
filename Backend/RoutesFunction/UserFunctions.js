@@ -4,6 +4,7 @@ const Users = require('../models/UserModel')
 const sendToken = require('../utils/token')
 const sendmail = require('../utils/sendmail')
 const crypto = require('crypto')
+const { error } = require('console')
 exports.CreateUser = catchAsync(async (req, res, next) => {
   const { name, email, password } = req.body
 
@@ -36,13 +37,14 @@ exports.LoginUser = catchAsync(async (req, res, next) => {
 })
 
 exports.forgetPassword = catchAsync(async (req, res, next) => {
-  const user = await Users.find({ email: req.body.email })
-  console.log(user)
+  console.log(req.body)
+  const user = await Users.findOne({ email: req.body.email })
+
   if (!user) {
     return next(new ErrorHandler('User not found', 404))
   }
 
-  const resettoken = user.getResetPasswordToken()
+  const resettoken = user.getResetToken()
   await user.save({ validateBeforeSave: false })
 
   const urltosendinmail = `${req.protocol}://${req.get(
@@ -52,7 +54,7 @@ exports.forgetPassword = catchAsync(async (req, res, next) => {
   const message = `This is the Password Recovery token that is being generated and the token is valid for 15 Minutes ${urltosendinmail} `
 
   const subject = 'E-COMMERCE'
-
+  const email = user.email
   try {
     await sendmail({
       subject,
@@ -67,7 +69,7 @@ exports.forgetPassword = catchAsync(async (req, res, next) => {
     user.resetPasswordToken = undefined
     user.resetPasswordExpire = undefined
     await user.save({ validateBeforeSave: false })
-
+    console.log(err)
     next(new ErrorHandler(err.message, 500))
   }
 })
@@ -102,11 +104,127 @@ exports.resetpassword = catchAsync(async (req, res, next) => {
     return next(new ErrorHandler('Both Password Do Not match', 400))
   }
 
-  user.password = req.body.password 
+  user.password = req.body.password
   user.resetPasswordToken = undefined
   user.resetPasswordExpire = undefined
 
   await user.save()
 
   sendToken(user, res, 200)
+})
+
+exports.UserDetails = catchAsync(async (req, res, next) => {
+  const user = await Users.findById(req.user.id)
+
+  res.status(201).json({
+    message: 'User Details',
+    user,
+  })
+})
+
+exports.updatePassword = catchAsync(async (req, res, next) => {
+  const user = await Users.findById(req.user.id)
+
+  const oldpassword = req.body.oldpassword
+  const newpassword = req.body.newpassword
+  const confirmpassword = req.body.confirmpassword
+
+  const isOldPasswordMatched = user.comparePassword(oldpassword)
+
+  if (!isOldPasswordMatched) {
+    return next(new ErrorHandler('ENTER PROPER CURRENT PASSWORD', 400))
+  }
+
+  if (newpassword !== confirmpassword) {
+    return next(
+      new ErrorHandler('NEW PASSWORD AND CONFIRM PASSWORD DO NOT MATCH', 400),
+    )
+  }
+
+  user.password = newpassword
+  await user.save()
+
+  sendToken(user, res, 200)
+})
+
+exports.updateProfile = catchAsync(async (req, res, next) => {
+  const options = {
+    name: req.body.name,
+    email: req.body.email,
+  }
+
+  const user = await Users.findByIdAndUpdate(req.user.id, options, {
+    new: true,
+    runValidators: true,
+    useFindAndModify: false,
+  })
+
+  res.status(201).json({
+    success: true,
+    message: 'Profile Updated',
+  })
+})
+
+//Get all users for admin
+
+exports.AlluserToAdmin = catchAsync(async (req, res, next) => {
+  const users = await Users.find()
+
+  res.status(200).json({
+    success: true,
+    users,
+  })
+})
+
+exports.SingleUserToAdmin = catchAsync(async (req, res, next) => {
+  const user = await Users.findById(req.params.id)
+
+  if (!user) {
+    return next(new ErrorHandler('User Not Found', 400))
+  }
+
+  res.status(200).json({
+    success: true,
+    user,
+  })
+})
+
+expots.deleteUserFromAdmin = catchAsync(async (req, res, next) => {
+  const userid = req.params.id
+  const user = await Users.findById(userid)
+  if (!user) {
+    return next(new ErrorHandler('User Not Exist', 400))
+  }
+  await user.remove()
+
+  res.status(200).json({
+    success: true,
+    message: 'The User is Deleted',
+  })
+})
+
+exports.updateuserByAdmin = catchAsync(async (req, res, next) => {
+  const newData = {
+    name: req.body.name,
+    email: req.body.email,
+    role: req.body.role,
+  }
+
+  const user = await Users.findByIdAndUpdate(req.params.id, newData, {
+    new: true,
+    runValidators: true,
+    useFindAndModify: false,
+  })
+
+  res.status(201).json({
+    success: true,
+    user,
+  })
+
+
+
+
+
+
+  
 })

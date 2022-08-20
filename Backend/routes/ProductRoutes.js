@@ -7,6 +7,9 @@ const {
   updateproduct,
   deleteproduct,
   getProductDetails,
+  getallreviews,
+  deleteReview,
+  addReviewsAndUpdate,
 } = require('../RoutesFunction/product')
 
 const router = express.Router()
@@ -21,11 +24,15 @@ router.post(
 
 //get routes
 router.get('/products', allproducts)
+router.route('/product/:id').get(getProductDetails)
 
 router
-  .route('/product/:id')
+  .route('/admin/product/:id')
   .put(isAuthenticated, authorisedRole('admin'), updateproduct)
   .delete(isAuthenticated, authorisedRole('admin'), deleteproduct)
-  .get(getProductDetails)
+
+router.route('/reviews').put(isAuthenticated, addReviewsAndUpdate)
+
+router.route('/review').get(getallreviews).delete(isAuthenticated, deleteReview)
 
 module.exports = router

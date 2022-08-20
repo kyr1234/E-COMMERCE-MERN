@@ -5,7 +5,7 @@ const ErrorHandler = require('../utils/ErrorClass')
 
 exports.isAuthenticated = catchAsync(async (req, res, next) => {
   const { token } = req.cookies
-  console.log(token)
+ 
 
   if (token === ' ') {
     return next(new ErrorHandler('Please Login ', 401))
