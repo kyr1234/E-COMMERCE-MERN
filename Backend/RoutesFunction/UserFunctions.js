@@ -3,6 +3,7 @@ const catchAsync = require('../catchAsyncError/catchAsync')
 const Users = require('../models/UserModel')
 const sendToken = require('../utils/token')
 const sendmail = require('../utils/sendmail')
+const crypto = require('crypto')
 exports.CreateUser = catchAsync(async (req, res, next) => {
   const { name, email, password } = req.body
 
@@ -81,4 +82,31 @@ exports.Logout = catchAsync(async (req, res, next) => {
     success: true,
     message: 'TOKEN DISABLED',
   })
+})
+
+exports.resetpassword = catchAsync(async (req, res, next) => {
+  const hashedtoken = crypto
+    .createHash('sha256')
+    .update(req.params.token)
+    .toString('hex')
+
+  const user = await Users.find({
+    resetPasswordToken: hashedtoken,
+    resetPasswordExpire: { $gt: Date.now() },
+  })
+
+  if (!user) {
+    return next(new ErrorHandler('Token is Expired', 404))
+  }
+  if (req.body.password != req.body.confirmpassword) {
+    return next(new ErrorHandler('Both Password Do Not match', 400))
+  }
+
+  user.password = req.body.password 
+  user.resetPasswordToken = undefined
+  user.resetPasswordExpire = undefined
+
+  await user.save()
+
+  sendToken(user, res, 200)
 })
