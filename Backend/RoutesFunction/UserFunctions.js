@@ -189,7 +189,7 @@ exports.SingleUserToAdmin = catchAsync(async (req, res, next) => {
   })
 })
 
-expots.deleteUserFromAdmin = catchAsync(async (req, res, next) => {
+exports.deleteUserFromAdmin = catchAsync(async (req, res, next) => {
   const userid = req.params.id
   const user = await Users.findById(userid)
   if (!user) {
@@ -220,11 +220,4 @@ exports.updateuserByAdmin = catchAsync(async (req, res, next) => {
     success: true,
     user,
   })
-
-
-
-
-
-
-  
 })

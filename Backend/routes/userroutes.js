@@ -5,6 +5,7 @@ const {
   CreateUser,
   LoginUser,
   forgetPassword,
+  SingleUserToAdmin,
   UserDetails,
   resetpassword,
   updatePassword,

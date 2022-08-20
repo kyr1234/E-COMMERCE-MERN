@@ -10,7 +10,7 @@ const {
   getallreviews,
   deleteReview,
   addReviewsAndUpdate,
-} = require('../RoutesFunction/product')
+} = require('../RoutesFunction/ProductFunctions')
 
 const router = express.Router()
 

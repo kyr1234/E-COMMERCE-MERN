@@ -1,8 +1,9 @@
 require('./databaseConnect/DatabaseConnect')
 require('dotenv').config()
 const express = require('express')
-const routes = require('./routes/routes')
-const users = require('./routes/userroutes')
+const users = require('./routes/UserRoutes')
+const products = require('./routes/ProductRoutes')
+const orders = require('./routes/OrderRoutes')
 const middleware = require('./Middleware/middleware')
 const cookieparser = require('cookie-parser')
 const app = require('./app')
@@ -18,8 +19,9 @@ process.on('uncaughtException', (error) => {
 
 //CONNECT DATABASE
 
-app.use('/api/v1', routes)
 app.use('/api/v1', users)
+app.use('/api/v1', products)
+app.use('/api/v1', orders)
 
 app.use(middleware)
 const server = app.listen(process.env.PORT, () => {
