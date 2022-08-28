@@ -51,15 +51,17 @@ exports.deleteproduct = catchAsync(async (req, res, next) => {
 /**OPEN GET CALLS*/
 exports.allproducts = catchAsync(async (req, res, next) => {
   const productcount = await Products.countDocuments()
-  const itemsperpage = 5
+
+  const data = await Products.find()
+  /*  const itemsperpage = 5
   const apifeature = new ApiFeature(Products.find(), req.query)
     .search()
     .filter()
     .pagination(itemsperpage)
-  const allitems = await apifeature.query
+  const allitems = await apifeature.query */
   res.status(200).json({
     message: 'Success',
-    allitems,
+    data,
     productcount,
   })
 })

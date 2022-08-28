@@ -6,6 +6,7 @@ const products = require('./routes/ProductRoutes')
 const orders = require('./routes/OrderRoutes')
 const middleware = require('./Middleware/middleware')
 const cookieparser = require('cookie-parser')
+const cors=require("cors")
 const app = require('./app')
 const { error } = require('jquery')
 app.use(express.json())
@@ -16,6 +17,13 @@ process.on('uncaughtException', (error) => {
   console.log('Shutting Down the Server')
   process.exit(1)
 })
+app.use(
+  cors({
+    origin: '*',
+    methods: ['GET', 'POST'],
+    credentials: true,
+  }),
+)
 
 //CONNECT DATABASE
 
@@ -24,14 +32,14 @@ app.use('/api/v1', products)
 app.use('/api/v1', orders)
 
 app.use(middleware)
-const server = app.listen(process.env.PORT, () => {
+app.listen(process.env.PORT, () => {
   console.log('Started the server')
 })
 
-process.on('unhandledRejection', (error) => {
+/* process.on('unhandledRejection', (error) => {
   console.log(error.message)
   console.log('Shutting Down the Server')
   server.close(() => {
     process.exit(1)
   })
-})
+}) */
