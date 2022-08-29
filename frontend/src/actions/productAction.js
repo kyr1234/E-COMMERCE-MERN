@@ -6,7 +6,9 @@ import {
   PRODUCT_DETAILS_REQUEST,
   PRODUCT_DETAILS_SUCCESS,
   PRODUCT_DETAILS_FAIL,
+  CLEAR_ERRORS,
 } from '../constants/productconstant.js'
+
 export const getProduct = () => {
   let link = `api/v1/products`
   return async (dispatch) => {
@@ -25,7 +27,26 @@ export const getProduct = () => {
     }
   }
 }
+export const getProductDetails = (id) => {
+  let link = `/api/v1/product/${id}`
+  return async (dispatch) => {
+    dispatch({ type: PRODUCT_DETAILS_REQUEST })
+    const { data } = await axios.get(link)
+    console.log(data.product)
+    dispatch({
+      type: PRODUCT_DETAILS_SUCCESS,
+      payload: data.product,
+    })
 
+    if (data.message != 'Success') {
+      dispatch({
+        type: PRODUCT_DETAILS_FAIL,
+        payload: error.response.data.message,
+      })
+    }
+  }
+}
+/* 
 export const getProductDetails = (id) => async (dispatch) => {
   try {
     dispatch({ type: PRODUCT_DETAILS_REQUEST })
@@ -42,7 +63,7 @@ export const getProductDetails = (id) => async (dispatch) => {
       payload: error.response.data.message,
     })
   }
-}
+} */
 export const clearErrors = () => async (dispatch) => {
   dispatch({ type: CLEAR_ERRORS })
 }
