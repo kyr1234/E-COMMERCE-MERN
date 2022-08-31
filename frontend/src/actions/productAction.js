@@ -22,17 +22,16 @@ export const getProduct = () => {
     if (data.message != 'Success') {
       dispatch({
         type: ALL_PRODUCT_FAIL,
-        payload: error.response.data.message,
+        payload: ' ',
       })
     }
   }
 }
-export const getProductDetails = (id) => {
+/* export const getProductDetails = (id) => {
   let link = `/api/v1/product/${id}`
   return async (dispatch) => {
     dispatch({ type: PRODUCT_DETAILS_REQUEST })
     const { data } = await axios.get(link)
-    console.log(data.product)
     dispatch({
       type: PRODUCT_DETAILS_SUCCESS,
       payload: data.product,
@@ -41,12 +40,12 @@ export const getProductDetails = (id) => {
     if (data.message != 'Success') {
       dispatch({
         type: PRODUCT_DETAILS_FAIL,
-        payload: error.response.data.message,
+        payload: ' ',
       })
     }
   }
-}
-/* 
+} */
+
 export const getProductDetails = (id) => async (dispatch) => {
   try {
     dispatch({ type: PRODUCT_DETAILS_REQUEST })
@@ -63,7 +62,7 @@ export const getProductDetails = (id) => async (dispatch) => {
       payload: error.response.data.message,
     })
   }
-} */
+}
 export const clearErrors = () => async (dispatch) => {
   dispatch({ type: CLEAR_ERRORS })
 }

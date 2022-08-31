@@ -5,6 +5,7 @@ const sendToken = require('../utils/token')
 const sendmail = require('../utils/sendmail')
 const crypto = require('crypto')
 const { error } = require('console')
+
 exports.CreateUser = catchAsync(async (req, res, next) => {
   const { name, email, password } = req.body
 

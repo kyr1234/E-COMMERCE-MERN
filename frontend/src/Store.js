@@ -9,7 +9,7 @@ import {
 
 const reducer = combineReducers({
   products: productsReducer,
-  product: productsDetailsReducer,
+  productDetails: productsDetailsReducer,
 })
 
 let initialState = {}
