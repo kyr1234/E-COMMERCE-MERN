@@ -1,14 +1,14 @@
-import React, { Fragment, useEffect, useState } from 'react'
+import React, { Fragment, useEffect } from 'react'
 import Carousel from 'react-material-ui-carousel'
 import './ProductDetails.css'
 import { useParams } from 'react-router-dom'
 import { useSelector, useDispatch } from 'react-redux'
 import { clearErrors, getProductDetails } from '../../actions/productAction'
-/* import ReviewCard from './ReviewCard.js' */
+import ReviewCard from '../ReviewCard/ReviewCard.js'
 import Loader from '../Layout/Loader/Loader'
 import { useAlert } from 'react-alert'
 import Metadata from '../Layout/Metadata'
-import ReactStars from 'react-rating-star-component'
+import { Rating } from '@material-ui/lab'
 
 const ProductDetails = () => {
   const { id } = useParams()
@@ -18,7 +18,7 @@ const ProductDetails = () => {
   const { product, loading, error } = useSelector(
     (state) => state.productDetails,
   )
-
+ 
   const options = {
     size: 'large',
     value: product.rating,
@@ -31,7 +31,6 @@ const ProductDetails = () => {
       alert.error(error)
       dispatch(clearErrors())
     }
-
     dispatch(getProductDetails(id))
   }, [dispatch, id, error, alert])
 
@@ -63,7 +62,7 @@ const ProductDetails = () => {
                 <p>Product # {product._id}</p>
               </div>
               <div className="detailsBlock-2">
-                <ReactStars {...options} />
+                <Rating {...options} />
                 <span className="detailsBlock-2-span">
                   {' '}
                   ({product.numOfReviews} Reviews)

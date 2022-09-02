@@ -1,7 +1,7 @@
 const ErrorHandler = require('../utils/ErrorClass')
 const catchAsync = require('../catchAsyncError/catchAsync')
 const Products = require('../models/ProductModel')
-const ApiFeature = require('../utils/Apifeatures')
+const ApiFeatures = require('../utils/Apifeatures')
 /** Admin Functions*/
 
 exports.createProduct = catchAsync(async (req, res, next) => {
@@ -52,17 +52,20 @@ exports.deleteproduct = catchAsync(async (req, res, next) => {
 exports.allproducts = catchAsync(async (req, res, next) => {
   const productcount = await Products.countDocuments()
 
-  const data = await Products.find()
-  /*  const itemsperpage = 5
-  const apifeature = new ApiFeature(Products.find(), req.query)
+  /*   const data = await Products.find() */
+
+  const itemsperpage = 5
+  const apifeature = new ApiFeatures(Products.find(), req.query)
     .search()
     .filter()
     .pagination(itemsperpage)
-  const allitems = await apifeature.query */
+  const data = await apifeature.query
+
   res.status(200).json({
     message: 'Success',
     data,
     productcount,
+    itemsperpage,
   })
 })
 

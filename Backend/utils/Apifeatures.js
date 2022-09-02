@@ -7,11 +7,11 @@ class Apifeatures {
   search() {
     const keyword = this.querystr.keyword
       ? {
-          name: {
-            $regex: this.querystr.keyword,
-            $options: 'i',
-          },
-        }
+        name: {
+          $regex: this.querystr.keyword,
+          $options: 'i',
+        },
+      }
       : {}
     this.query = this.query.find({ ...keyword })
 
@@ -19,30 +19,32 @@ class Apifeatures {
   }
 
   filter() {
-    const querycopy = { ...this.querystr }
+    const queryCopy = { ...this.queryStr };
+    //   Removing some fields for category
+    const removeFields = ["keyword", "page", "limit"];
 
-    const removeFields = ['keyword', 'page', 'limit']
+    removeFields.forEach((key) => delete queryCopy[key]);
 
-    removeFields.forEach((key) => delete querycopy[key])
+    // Filter For Price and Rating
 
-    //filter for price
-    let QueryString = JSON.stringify(querycopy)
-    QueryString = QueryString.replace(
-      /\b(gt|gte|lt|lte)\b/g,
-      (key) => `$${key}`,
-    )
-    this.query = this.query.find(JSON.parse(QueryString))
-    return this
+    let queryStr = JSON.stringify(queryCopy);
+    queryStr = queryStr.replace(/\b(gt|gte|lt|lte)\b/g, (key) => `$${key}`);
+
+    this.query = this.query.find(JSON.parse(queryStr));
+
+    return this;
   }
 
-  pagination(itemsperpage) {
-    const currentpage = this.querystr.page || 1
-    const skip = itemsperpage * (currentpage - 1)
+  pagination(resultPerPage) {
+    const currentPage = Number(this.queryStr.page) || 1;
 
-    this.query = this.query.limit(itemsperpage).skip(skip)
+    const skip = resultPerPage * (currentPage - 1);
 
-    return this
+    this.query = this.query.limit(resultPerPage).skip(skip);
+
+    return this;
   }
 }
+
 
 module.exports = Apifeatures

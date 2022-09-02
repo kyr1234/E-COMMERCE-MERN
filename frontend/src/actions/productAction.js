@@ -9,14 +9,15 @@ import {
   CLEAR_ERRORS,
 } from '../constants/productconstant.js'
 
-export const getProduct = () => {
-  let link = `api/v1/products`
+export const getProduct = (keyword = '') => {
+  let link = `api/v1/products?keyword=${keyword}`
   return async (dispatch) => {
     dispatch({ type: ALL_PRODUCT_REQUEST })
     const { data } = await axios.get(link)
+    console.log()
     dispatch({
       type: ALL_PRODUCT_SUCCESS,
-      payload: data.data,
+      payload: data,
     })
 
     if (data.message != 'Success') {
@@ -51,7 +52,7 @@ export const getProductDetails = (id) => async (dispatch) => {
     dispatch({ type: PRODUCT_DETAILS_REQUEST })
 
     const { data } = await axios.get(`/api/v1/product/${id}`)
-
+    console.log(data)
     dispatch({
       type: PRODUCT_DETAILS_SUCCESS,
       payload: data.product,
