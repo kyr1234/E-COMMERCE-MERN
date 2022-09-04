@@ -9,7 +9,7 @@ import Slider from '@material-ui/core/Slider'
 import { useAlert } from 'react-alert'
 import MetaData from '../Layout/Metadata'
 import { useParams } from 'react-router-dom'
-
+import Typography from '@material-ui/core/Typography'
 const Products = () => {
   const dispatch = useDispatch()
 
@@ -17,10 +17,10 @@ const Products = () => {
   const { keyword } = useParams()
 
   const [currentPage, setCurrentPage] = useState(1)
-  /*const [price, setPrice] = useState([0, 25000]);
-  const [category, setCategory] = useState("");
+  const [price, setPrice] = useState([0, 10000])
+  const [category, setCategory] = useState('')
 
-  const [ratings, setRatings] = useState(0); */
+  /*const [ratings, setRatings] = useState(0); */
 
   const { products, loading, error, itemperpage, productCount } = useSelector(
     (state) => state.products,
@@ -32,12 +32,17 @@ const Products = () => {
       dispatch(clearErrors())
     }
 
-    dispatch(getProduct(keyword))
-  }, [dispatch, alert, error])
+    dispatch(getProduct(keyword, currentPage, price, category))
+  }, [dispatch, alert, error, keyword, currentPage, price, category])
 
   const setCurrentPageNo = (e) => {
     setCurrentPage(e)
   }
+  const priceHandler = (event, newPrice) => {
+    setPrice(newPrice)
+  }
+
+  const categories = ['LAPTOP', 'FOOTWEAR', 'PHONE', 'CAMERA']
 
   return (
     <Fragment>
@@ -55,7 +60,7 @@ const Products = () => {
               ))}
           </div>
 
-          {/*       <div className="filterBox">
+          <div className="filterBox">
             <Typography>Price</Typography>
             <Slider
               value={price}
@@ -63,7 +68,7 @@ const Products = () => {
               valueLabelDisplay="auto"
               aria-labelledby="range-slider"
               min={0}
-              max={25000}
+              max={10000}
             />
 
             <Typography>Categories</Typography>
@@ -79,21 +84,21 @@ const Products = () => {
               ))}
             </ul>
 
-            <fieldset>
+            {/*     <fieldset>
               <Typography component="legend">Ratings Above</Typography>
               <Slider
                 value={ratings}
                 onChange={(e, newRating) => {
-                  setRatings(newRating);
+                  setRatings(newRating)
                 }}
                 aria-labelledby="continuous-slider"
                 valueLabelDisplay="auto"
                 min={0}
                 max={5}
               />
-            </fieldset>
-          </div> */}
-          {itemperpage < productCount && (
+            </fieldset>  */}
+          </div>
+          {!(itemperpage < productCount) && (
             <div className="paginationBox">
               <Pagination
                 activePage={currentPage}
