@@ -52,14 +52,13 @@ exports.deleteproduct = catchAsync(async (req, res, next) => {
 exports.allproducts = catchAsync(async (req, res, next) => {
   const productcount = await Products.countDocuments()
 
-  /*   const data = await Products.find() */
-
-  const itemsperpage = 5
+  const itemsperpage = 6
   const apifeature = new ApiFeatures(Products.find(), req.query)
     .search()
     .filter()
     .pagination(itemsperpage)
-  const data = await apifeature.query
+
+  let data = await apifeature.query
 
   res.status(200).json({
     message: 'Success',
