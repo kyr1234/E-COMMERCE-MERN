@@ -110,10 +110,10 @@ exports.addReviewsAndUpdate = catchAsync(async (req, res, next) => {
 
   let avgrating = 0
 
-  product.rating =
-    product.review.forEach((rev) => {
-      avgrating += rev.rating
-    }) / product.rating.length
+  product.review.forEach((rev) => {
+    avgrating += Number(rev.rating)
+  })
+  product.rating = avgrating / product.rating.length
 
   await product.save({ validateBeforeSave: false })
 
@@ -134,22 +134,22 @@ exports.deleteReview = catchAsync(async (req, res, next) => {
   })
   product.review = reviews
   let avg = 0
-  const rating =
-    reviews.forEach((rev) => {
-      avg += rev.rating
-    }) / reviews.length
 
+  reviews.forEach((rev) => {
+    avg += rev.rating
+  })
+  product.rating = avg / reviews.length
   const noOfReviews = reviews.length
 
-  await product.findByIdAndUpdate(req.query.productid, {
+  await Products.findByIdAndUpdate(req.query.productid, {
     reviews,
-    rating,
+    rating: product.rating,
     noOfReviews,
   })
 
   res.status(200).json({
     success: true,
-    review: product.review,
+    review: reviews,
   })
 })
 

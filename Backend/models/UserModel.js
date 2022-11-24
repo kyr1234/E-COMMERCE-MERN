@@ -54,6 +54,7 @@ Userschema.methods.getJWTToken = function () {
     expiresIn: process.env.EXPIRY,
   })
 }
+
 Userschema.methods.getResetToken = function () {
   const token = crypto.randomBytes(20).toString('hex')
 
